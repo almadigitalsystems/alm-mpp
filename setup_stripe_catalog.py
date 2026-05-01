@@ -1,9 +1,9 @@
 """
 ALM Stripe Catalog Setup Script
-Creates MPP Products and Prices in Stripe (SANDBOX/TEST MODE ONLY)
+Creates MPP Products and Prices in Stripe (LIVE MODE â€” approved per ALM-3972)
 
 Usage:
-  STRIPE_SECRET_KEY=sk_test_... python3 setup_stripe_catalog.py
+  STRIPE_SECRET_KEY=sk_live_... python3 setup_stripe_catalog_live.py
 
 Output: env vars to add to Railway + Paperclip config
 """
@@ -14,12 +14,16 @@ import stripe
 
 stripe.api_key = os.environ["STRIPE_SECRET_KEY"]
 
-# Verify we're in test mode
-if not stripe.api_key.startswith("sk_test_"):
-    print("ERROR: This script must be run with a TEST key (sk_test_...). Aborting.")
+# Log mode for awareness
+if stripe.api_key.startswith("sk_test_"):
+    print("Running in TEST mode.")
+elif stripe.api_key.startswith("sk_live_"):
+    print("Running in LIVE mode (approved per ALM-3972 â€” Stripe Mode Policy).")
+else:
+    print("ERROR: Unrecognized key format. Aborting.")
     exit(1)
 
-print(f"Running in TEST mode. Account key prefix: {stripe.api_key[:12]}...")
+print(f"Account key prefix: {stripe.api_key[:15]}...")
 print()
 
 
@@ -59,7 +63,7 @@ def create_product_and_price(name, description, service_type, amount_cents, recu
 def main():
     results = {}
 
-    # 1. Website Build — One-time $500
+    # 1. Website Build â€” One-time $500
     prod_id, price_id = create_product_and_price(
         name="ALM Website Build",
         description="Professional AI-assisted website design and development",
@@ -69,7 +73,7 @@ def main():
     )
     results["website_build"] = {"product_id": prod_id, "price_id": price_id}
 
-    # 2. Social Media Management — $300/month recurring
+    # 2. Social Media Management â€” $300/month recurring
     prod_id, price_id = create_product_and_price(
         name="ALM Social Media Management",
         description="Monthly social media content and management",
@@ -79,7 +83,7 @@ def main():
     )
     results["social_media_management"] = {"product_id": prod_id, "price_id": price_id}
 
-    # 3. Full Package — $700/month recurring
+    # 3. Full Package â€” $700/month recurring
     prod_id, price_id = create_product_and_price(
         name="ALM Full Package",
         description="Website build + Social Media Management bundle",
