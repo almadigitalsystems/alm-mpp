@@ -128,18 +128,38 @@ async def initiate_payment(req: PaymentRequest):
         "client_agent_id": req.client_agent_id,
     }
 
+    is_subscription = service["type"] != "one_time"
+
+    # Create Customer object with metadata first.
+    # Stripe does NOT auto-propagate session metadata to Customer/PaymentIntent/Subscription.
+    # This ensures Cody can query customer.subscription.created with initiation_type=agent_mpp.
+    customer_params = {"metadata": mpp_metadata}
+    if req.client_name:
+        customer_params["name"] = req.client_name
+    if req.client_email:
+        customer_params["email"] = req.client_email
+    try:
+        customer = stripe.Customer.create(**customer_params)
+    except stripe.StripeError as e:
+        raise HTTPException(status_code=502, detail=f"Stripe error creating customer: {str(e)}")
+
     # Build checkout session params
     session_params = {
-        "mode": "payment" if service["type"] == "one_time" else "subscription",
+        "mode": "subscription" if is_subscription else "payment",
         "line_items": [{"price": price_id, "quantity": 1}],
         "metadata": mpp_metadata,
+        "customer": customer.id,
         "success_url": req.success_url,
         "cancel_url": req.cancel_url,
     }
 
-    # Pre-fill customer info if provided
-    if req.client_email:
-        session_params["customer_email"] = req.client_email
+    # Propagate metadata to the underlying payment object (Stripe does NOT auto-inherit from session).
+    # payment_intent_data.metadata -> PaymentIntent (monitored by Cody: payment_intent.succeeded)
+    # subscription_data.metadata   -> Subscription  (monitored by Cody: customer.subscription.created)
+    if is_subscription:
+        session_params["subscription_data"] = {"metadata": mpp_metadata}
+    else:
+        session_params["payment_intent_data"] = {"metadata": mpp_metadata}
 
     try:
         session = stripe.checkout.Session.create(**session_params)
@@ -153,6 +173,7 @@ async def initiate_payment(req: PaymentRequest):
         "service_type": req.service_type,
         "amount_usd": service["price_usd"],
         "payment_type": service["type"],
+        "customer_id": customer.id,
         "metadata": mpp_metadata,
         "status": "pending",
     }
