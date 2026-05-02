@@ -39,14 +39,6 @@ STRIPE_PRICE_IDS = {
         "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_STARTER", "price_1TSSGCAytyJRLR9LCDJtEH9b"),
         "monthly": None,
     },
-    SERVICE_WEBSITE_BUILD_STARTER: {
-        "name": "Website Build Starter",
-        "description": "Professional AI-assisted starter website. Up to 5 pages. Delivered same day.",
-        "type": "one_time",
-        "setup_usd": 50,
-        "monthly_usd": None,
-        "currency": "usd",
-    },
     SERVICE_WEBSITE_BUILD_GROWTH: {
         "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_GROWTH", "price_1TSPWnAytyJRLR9L2YJvlonU"),
         "monthly": None,
@@ -70,10 +62,6 @@ STRIPE_PRICE_IDS = {
 }
 
 SERVICE_CATALOG = {
-    SERVICE_WEBSITE_BUILD_STARTER: {
-        "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_STARTER", "price_1TSSGCAytyJRLR9LCDJtEH9b"),
-        "monthly": None,
-    },
     SERVICE_WEBSITE_BUILD_STARTER: {
         "name": "Website Build Starter",
         "description": "Professional AI-assisted starter website. Up to 5 pages. Delivered same day.",
