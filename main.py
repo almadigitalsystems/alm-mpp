@@ -26,6 +26,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 # Service type constants (must match metadata values)
+SERVICE_WEBSITE_BUILD_STARTER = "website_build_starter"
 SERVICE_WEBSITE_BUILD_GROWTH = "website_build_growth"
 SERVICE_WEBSITE_BUILD_PREMIUM = "website_build_premium"
 SERVICE_FULL_PRESENCE_BUNDLE = "full_presence_bundle"
@@ -34,6 +35,18 @@ SERVICE_PINNACLE_PACKAGE = "pinnacle_package"
 
 # CEO-approved price IDs (ALM-3949 / ALM-4190)
 STRIPE_PRICE_IDS = {
+    SERVICE_WEBSITE_BUILD_STARTER: {
+        "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_STARTER", "price_1TSSGCAytyJRLR9LCDJtEH9b"),
+        "monthly": None,
+    },
+    SERVICE_WEBSITE_BUILD_STARTER: {
+        "name": "Website Build Starter",
+        "description": "Professional AI-assisted starter website. Up to 5 pages. Delivered same day.",
+        "type": "one_time",
+        "setup_usd": 50,
+        "monthly_usd": None,
+        "currency": "usd",
+    },
     SERVICE_WEBSITE_BUILD_GROWTH: {
         "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_GROWTH", "price_1TSPWnAytyJRLR9L2YJvlonU"),
         "monthly": None,
@@ -57,6 +70,18 @@ STRIPE_PRICE_IDS = {
 }
 
 SERVICE_CATALOG = {
+    SERVICE_WEBSITE_BUILD_STARTER: {
+        "setup": os.getenv("STRIPE_PRICE_WEBSITE_BUILD_STARTER", "price_1TSSGCAytyJRLR9LCDJtEH9b"),
+        "monthly": None,
+    },
+    SERVICE_WEBSITE_BUILD_STARTER: {
+        "name": "Website Build Starter",
+        "description": "Professional AI-assisted starter website. Up to 5 pages. Delivered same day.",
+        "type": "one_time",
+        "setup_usd": 50,
+        "monthly_usd": None,
+        "currency": "usd",
+    },
     SERVICE_WEBSITE_BUILD_GROWTH: {
         "name": "Website Build Growth",
         "description": "Professional AI-assisted website design and development. Delivered in 5-7 business days.",
